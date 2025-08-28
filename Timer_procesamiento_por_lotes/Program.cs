@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 class Temporizador
 {
-    public string Nombre { get; set; }
     public int Duracion { get; set; }
 }
 
@@ -17,23 +16,21 @@ class Program
         while (true)
         {
             Console.WriteLine("\nMenú:");
-            Console.WriteLine("1) Agregar temporizador");
-            Console.WriteLine("2) Mostrar y ejecutar temporizador");
-            Console.WriteLine("3) Salir");
+            Console.WriteLine("1) Agregar proceso");
+            Console.WriteLine("2) Mostrar procesos");
+            Console.WriteLine("3) Ejecutar procesos");
+            Console.WriteLine("4) Salir");
 
             Console.Write("Elige una opción: ");
             string opcion = Console.ReadLine();
 
             if (opcion == "1")
             {
-                Console.Write("Nombre del temporizador: ");
-                string nombre = Console.ReadLine();
-
-                Console.Write("Duración en segundos: ");
+                Console.Write("Duración en del proceso: ");
                 if (int.TryParse(Console.ReadLine(), out int duracion) && duracion > 0)
                 {
-                    temporizadores.Add(new Temporizador { Nombre = nombre, Duracion = duracion });
-                    Console.WriteLine("Temporizador agregado.");
+                    temporizadores.Add(new Temporizador { Duracion = duracion });
+                    Console.WriteLine("Proceso agregado.");
                 }
                 else
                 {
@@ -51,11 +48,10 @@ class Program
                 Console.WriteLine("Temporizadores:");
                 for (int i = 0; i < temporizadores.Count; i++)
                 {
-                    Console.WriteLine($"{i + 1}) {temporizadores[i].Nombre} ({temporizadores[i].Duracion} segundos)");
+                    Console.WriteLine($"{i + 1}) ({temporizadores[i].Duracion} segundos)");
                 }
 
-                Console.WriteLine("0) Volver al menú principal");
-                Console.Write("Selecciona un temporizador (número): ");
+                Console.WriteLine("Presiona cualquier tecla para volver al menú principal");
                 string seleccionStr = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(seleccionStr) || seleccionStr == "0")
@@ -63,23 +59,28 @@ class Program
                     Console.WriteLine("Regresando al menú principal...");
                     continue;
                 }
-
-                if (int.TryParse(seleccionStr, out int seleccion) &&
-                    seleccion >= 1 && seleccion <= temporizadores.Count)
-                {
-                    var temporizador = temporizadores[seleccion - 1];
-                    Console.WriteLine($"\nIniciando temporizador: {temporizador.Nombre}");
-
-                    await EjecutarCuentaRegresiva(temporizador.Duracion);
-
-                    Console.WriteLine("Temporizador finalizado.\n");
-                }
                 else
                 {
-                    Console.WriteLine("Selección no válida. Regresando al menú principal...");
+                    Console.WriteLine("Regresando al menú principal...");
                 }
             }
             else if (opcion == "3")
+            {
+                if (temporizadores.Count == 0)
+                {
+                    Console.WriteLine("No hay procesos para ejecutar.");
+                    continue;
+                }
+
+                Console.WriteLine("Ejecutando procesos...");
+                for (int i = 0; i < temporizadores.Count; i++)
+                {
+                    Console.WriteLine($"\nProceso {i + 1} ({temporizadores[i].Duracion} segundos):");
+                    await EjecutarCuentaRegresiva(temporizadores[i].Duracion);
+                    Console.WriteLine("Proceso terminado.");
+                }
+            }
+            else if (opcion == "4")
             {
                 Console.WriteLine("Programa finalizado");
                 break;
